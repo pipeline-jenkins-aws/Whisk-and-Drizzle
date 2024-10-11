@@ -19,16 +19,32 @@ import AboutPage from "./pages/AboutPage";
 
 function App() {
   const { user, checkAuth, checkingAuth } = useUserStore();
-  const { getCartItems } = useCartStore();
+  const { updateCartItems } = useCartStore(); // Ensure this function is defined in your useCartStore
+
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
   useEffect(() => {
-    if (!user) return;
+    const getCartItems = async () => {
+      if (!user) return;
+
+      try {
+        const response = await fetch('/api/cart'); // Adjust to your API endpoint
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+
+        // Ensure data is an array
+        if (!Array.isArray(data)) throw new Error('Data is not an array');
+
+        updateCartItems(data); // Update your cart store with the fetched items
+      } catch (error) {
+        console.error('Error fetching cart items:', error);
+      }
+    };
 
     getCartItems();
-  }, [getCartItems, user]);
+  }, [user, updateCartItems]); // Ensure to include updateCartItems in the dependencies
 
   if (checkingAuth) return <LoadingSpinner />;
 
@@ -53,10 +69,7 @@ function App() {
             path="/login"
             element={!user ? <LoginPage /> : <Navigate to="/" />}
           />
-          <Route
-            path="/about"
-            element={<AboutPage/>}
-          />
+          <Route path="/about" element={<AboutPage />} />
           <Route
             path="/secret-dashboard"
             element={
