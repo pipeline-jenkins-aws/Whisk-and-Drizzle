@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "mocha --reporter mochawesome --reporter-options reportDir=mochawesome-report"
+    "test": "mocha --reporter mochawesome --reporter-options reportDir=mochawesome-report,reportFilename=mochawesome"
   },
   "dependencies": {
     "@stripe/stripe-js": "^4.7.0",
